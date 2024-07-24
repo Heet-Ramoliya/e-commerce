@@ -5,7 +5,7 @@ import JWT from "jsonwebtoken";
 //POST REGISTER
 const createUser = async (req, res) => {
   try {
-    const { name, email, password, phone, address } = req.body;
+    const { name, email, password, phone, address, answer } = req.body;
 
     //Validation
     if (!name) {
@@ -22,6 +22,9 @@ const createUser = async (req, res) => {
     }
     if (!address) {
       return res.send({ message: "Address is Required" });
+    }
+    if (!answer) {
+      return res.send({ message: "Answer is Required" });
     }
 
     //check user have already account using this email
@@ -43,6 +46,7 @@ const createUser = async (req, res) => {
       password: hashedPassword,
       phone,
       address,
+      answer,
     }).save();
 
     res.status(201).send({
@@ -115,4 +119,50 @@ const userLogin = async (req, res) => {
   }
 };
 
-export { createUser, userLogin };
+//post FORGOT PASSWORD
+const forgotPassword = async (req, res) => {
+  try {
+    const { email, answer, newPassword } = req.body;
+
+    // Validate input
+    if (!email) {
+      return res.status(400).send({ message: "Email is required" });
+    }
+    if (!answer) {
+      return res.status(400).send({ message: "Answer is required" });
+    }
+    if (!newPassword) {
+      return res.status(400).send({ message: "New password is required" });
+    }
+
+    // Find user by email and security answer
+    const user = await userModel.findOne({ email, answer });
+
+    if (!user) {
+      return res
+        .status(404)
+        .send({ success: false, message: "User not found" });
+    }
+
+    // Hash the new password
+    const hashed = await hashPassword(newPassword);
+
+    // Update user's password
+    await userModel.findByIdAndUpdate(user._id, { password: hashed });
+
+    // Send success response
+    res.status(200).send({
+      success: true,
+      message: "Password reset successfully",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({
+      success: false,
+      message: "Something went wrong",
+      error,
+    });
+  }
+};
+
+export { createUser, userLogin, forgotPassword };

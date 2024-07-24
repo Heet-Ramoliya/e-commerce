@@ -21,7 +21,5 @@ app.use(morgan("dev"));
 //Routes
 app.use("/api/v1/auth", authRoutes);
 
-app.get("/", (req, res) => res.status(200).send("Hello World!"));
-
 //port
 app.listen(process.env.PORT);
