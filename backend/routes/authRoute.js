@@ -17,7 +17,13 @@ router.get("/test", requireSignin, isAdmin, (req, res) => {
   res.send("this is protected route");
 });
 
+//protected user route auth
 router.get("/user-auth", requireSignin, (req, res) => {
+  res.status(200).send({ ok: true });
+});
+
+//protected admin route auth
+router.get("/admin-auth", requireSignin, isAdmin, (req, res) => {
   res.status(200).send({ ok: true });
 });
 
