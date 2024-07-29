@@ -6,6 +6,10 @@ import {
   getProductPhoto,
   deleteProduct,
   updateProduct,
+  getProductFilter,
+  getProductCount,
+  productList,
+  searchProduct,
 } from "../controllers/productController.js";
 import { isAdmin, requireSignin } from "../middlewares/authMiddleware.js";
 import formidable from "express-formidable";
@@ -35,5 +39,13 @@ router.get("/get-product/:slug", getSingleProduct);
 router.get("/product-photo/:pid", getProductPhoto);
 
 router.delete("/delete-product/:pid", deleteProduct);
+
+router.post("/product-filter", getProductFilter);
+
+router.get("/product-count", getProductCount);
+
+router.get("/product-list/:page", productList);
+
+router.get("/search/:keyword", searchProduct);
 
 export default router;
